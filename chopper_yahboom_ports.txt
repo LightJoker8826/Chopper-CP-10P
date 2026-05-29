@@ -1,0 +1,69 @@
+# Chopper port map - Yahboom Roboduino YB-EAV 1.3
+# Everything on S1-S4 and M1-M4 goes through PCA9685 at 0x40
+# Use Adafruit_PWMServoDriver, not Servo.h
+
+================================================================
+WHAT'S PLUGGED IN
+================================================================
+
+S1 (ch 0) - left leg pivot
+S2 (ch 1) - left foot pivot
+S3 (ch 2) - right leg pivot (mirror: 180 - angle)
+S4 (ch 3) - right foot pivot (mirror: 180 - angle)
+Servo C (ch 4) - head rotation
+Servo D (ch 5) - center wheel steering
+
+M3 (ch 10/11) - leg lift motor (tested, works)
+  forward = ch 10, reverse = ch 11
+
+Left track - pins 7, 8, 11 (TB6612 on board)
+Right track - pins 4, 2, 5
+Center wheel retract - pins 9, 10 (L9110S)
+Status LED - pin A4
+Ultrasonic - pins 13 (trig), 12 (echo)
+ESP32 serial - A0 (rx), A3 (tx)
+DFPlayer - A2 (rx), pin 6 (tx)
+
+No foot retraction. Tracks are the only drive motors.
+
+================================================================
+MOTOR PORTS M1-M4 (PCA9685)
+================================================================
+
+M1 - ch 13 fwd / ch 12 rev (unused)
+M2 - ch 15 fwd / ch 14 rev (unused)
+M3 - ch 10 fwd / ch 11 rev (leg lift) ** confirmed **
+M4 - ch 8 fwd / ch 9 rev (unused)
+
+================================================================
+HOW TO DRIVE STUFF
+================================================================
+
+Motors:
+  pwm.setPWM(fwdCh, 0, speed);
+  pwm.setPWM(revCh, 0, 0);
+  speed = 0-4095
+
+Servos:
+  us = (degree * 1800 / 180) + 600
+  pwm.setPWM(ch, 0, us * 4096 / 20000)
+
+Right side servos (S3, S4) need 180 - angle
+
+================================================================
+SERVO ANGLES (tune after build)
+================================================================
+
+Leg upright: 90 | Leg folded: 0
+Foot level: 90
+Head center: 90 | Head left: 45 | Head right: 135
+Steer center: 90 | Steer left: 0 | Steer right: 180
+
+================================================================
+SOUND FILES (SD card folder /01/)
+================================================================
+
+001 startup | 002 alert | 003 happy | 004 scared
+005 obstacle | 006 transform
+
+Free pins: 3, A1, A5
